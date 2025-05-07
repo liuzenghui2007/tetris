@@ -228,9 +228,21 @@ def main():
                             current.x += 1
                             play_sound('move')
                     elif event.key == pygame.K_DOWN:
-                        if valid_move(grid, current, 0, 1):
+                        # 快速下落到底部
+                        while valid_move(grid, current, 0, 1):
                             current.y += 1
-                            play_sound('move')
+                        play_sound('land')  # 播放落地音效
+                        lock_tetromino(grid, current)
+                        grid, cleared = clear_lines(grid)
+                        if cleared > 0:
+                            play_sound('clear')
+                        score += SCORES[cleared]
+                        current = next_tetromino
+                        next_tetromino = get_new_tetromino()
+                        if not valid_move(grid, current, 0, 0):
+                            game_over = True
+                            play_sound('game_over')
+                        fall_time = 0  # 重置下落时间
                     elif event.key == pygame.K_UP:
                         rotated = [list(row) for row in zip(*current.shape[::-1])]
                         if valid_move(grid, current, 0, 0, rotated):

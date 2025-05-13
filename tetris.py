@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import os
 
 # 游戏窗口参数
 WINDOW_WIDTH = 400
@@ -56,6 +57,9 @@ SOUND_FILES = {
 
 # 音效对象
 sounds = {}
+
+# 加载自定义字体
+FONT_PATH = os.path.join(os.path.dirname(__file__), 'fonts', 'STHeiti Medium.ttc')
 
 def load_sounds():
     """加载所有音效"""
@@ -156,13 +160,13 @@ def clear_lines(grid):
 
 # 在界面上显示分数
 def draw_score(screen, score):
-    font = pygame.font.SysFont('Arial', 24, bold=True)
+    font = pygame.font.Font(FONT_PATH, 24)
     text = font.render(f'分数: {score}', True, SCORE_COLOR)
     screen.blit(text, (WINDOW_WIDTH - 150, 20))
 
 # 绘制下一块方块预览
 def draw_next(screen, next_tetromino):
-    font = pygame.font.SysFont('Arial', 20)
+    font = pygame.font.Font(FONT_PATH, 20)
     text = font.render('下一块:', True, SCORE_COLOR)
     screen.blit(text, (WINDOW_WIDTH - 150, 70))
     preview_rect = pygame.Rect(WINDOW_WIDTH - 130, 95, 4 * GRID_SIZE, 4 * GRID_SIZE)
@@ -175,8 +179,8 @@ def draw_next(screen, next_tetromino):
 
 # 游戏结束界面
 def draw_game_over(screen, score):
-    font1 = pygame.font.SysFont('Arial', 36, bold=True)
-    font2 = pygame.font.SysFont('Arial', 24)
+    font1 = pygame.font.Font(FONT_PATH, 36)
+    font2 = pygame.font.Font(FONT_PATH, 24)
     text1 = font1.render('游戏结束', True, GAMEOVER_COLOR)
     text2 = font2.render(f'最终得分: {score}', True, SCORE_COLOR)
     text3 = font2.render('按回车键重新开始', True, SCORE_COLOR)
@@ -279,7 +283,7 @@ def main():
         draw_score(screen, score)
         draw_next(screen, next_tetromino)
         if paused and not game_over:
-            font = pygame.font.SysFont('Arial', 36, bold=True)
+            font = pygame.font.Font(FONT_PATH, 36)
             text = font.render('暂停', True, PAUSE_COLOR)
             screen.blit(text, (WINDOW_WIDTH // 2 - 50, WINDOW_HEIGHT // 2 - 20))
         if game_over:

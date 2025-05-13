@@ -22,6 +22,7 @@ GAMEOVER_COLOR = (255, 140, 120) # 柔和橙红
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
+SHADOW_ALPHA = 80  # 影子透明度
 COLORS = [
     (120, 210, 255),   # I型：天蓝
     (120, 160, 255),   # J型：柔和蓝
@@ -188,6 +189,27 @@ def draw_game_over(screen, score):
     screen.blit(text2, (WINDOW_WIDTH // 2 - 80, WINDOW_HEIGHT // 2 - 20))
     screen.blit(text3, (WINDOW_WIDTH // 2 - 110, WINDOW_HEIGHT // 2 + 20))
 
+# 计算影子落点位置
+def get_shadow_y(grid, tetromino):
+    y = tetromino.y
+    while True:
+        if not valid_move(grid, tetromino, 0, y - tetromino.y + 1):
+            break
+        y += 1
+    return y
+
+# 绘制影子方块
+def draw_shadow(screen, grid, tetromino):
+    shadow_y = get_shadow_y(grid, tetromino)
+    color = tetromino.color + (SHADOW_ALPHA,)
+    shadow_surface = pygame.Surface((GRID_SIZE, GRID_SIZE), pygame.SRCALPHA)
+    shadow_surface.fill(color)
+    for y, row in enumerate(tetromino.shape):
+        for x, cell in enumerate(row):
+            if cell:
+                rect = pygame.Rect((tetromino.x + x) * GRID_SIZE, (shadow_y + y) * GRID_SIZE, GRID_SIZE, GRID_SIZE)
+                screen.blit(shadow_surface, rect)
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -279,6 +301,7 @@ def main():
         screen.fill(BG_COLOR)
         draw_grid(screen, grid)
         if not game_over:
+            draw_shadow(screen, grid, current)
             draw_tetromino(screen, current)
         draw_score(screen, score)
         draw_next(screen, next_tetromino)
